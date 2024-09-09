@@ -69,9 +69,9 @@ def extract_keywords(text, seed=None):
     this function extracts the keywords that will be used to perform the search for articles that will be used in RAG.
 
     >>> extract_keywords('Who is the current democratic presidential nominee?', seed=0)
-    'Joe candidate nominee presidential Democrat election primary TBD voting politics'
+    'democratic nominee 2024 election joe biden candidacy president politics usa'
     >>> extract_keywords('What is the policy position of Trump related to illegal Mexican immigrants?', seed=0)
-    'Trump Mexican immigrants policy position illegal border control deportation walls'
+    'Trump illegal Mexican immigration policy stance border control deportation enforcement'
 
     Note that the examples above are passing in a seed value for deterministic results.
     In production, you probably do not want to specify the seed.
@@ -87,8 +87,12 @@ def extract_keywords(text, seed=None):
     # Groq! Has! Deterministic results by specifying the seed of the message!!!!!!!!!!!!! That's
     # super technically impressive. 99% deterministic, just rerun it if you get something different
 
-    system = '''
-    Output some keywords.
+    system = '''Respond with exactly ten search keywords from and related to the input
+    below. Do not attempt to answer questions using the keywords. Stay focused
+    on providing keywords from the question and keywords that describe the
+    general topic. Do not include new lines or bullet points. Format your
+    response like 'word word word word', with exactly 10 words.
+
     '''
 
     # if you've done system prompt correctly, should get output similar to doctest, change it to
