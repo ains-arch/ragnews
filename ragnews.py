@@ -47,7 +47,7 @@ def run_llm(system, user, model='llama3-8b-8192', seed=None):
             }
         ],
         model=model,
-        seed=seed,
+        seed=seed, # specify seed of random number generator it's using
     )
     return chat_completion.choices[0].message.content
 
@@ -79,10 +79,22 @@ def extract_keywords(text, seed=None):
 
     # FIXME:
     # Implement this function.
-    # It's okay if you don't get the exact same keywords as me.
-    # You probably certainly won't because you probably won't come up with the exact same prompt as me.
-    # To make the test cases above pass,
-    # you'll have to modify them to be what the output of your prompt provides.
+    # It's okay if you don't get the exact same keywords as me. You probably certainly won't because
+    # you probably won't come up with the exact same prompt as me. To make the test cases above
+    # pass, you'll have to modify them to be what the output of your prompt provides.
+
+    # TODO: this one is doable after monday class
+    # Groq! Has! Deterministic results by specifying the seed of the message!!!!!!!!!!!!! That's
+    # super technically impressive. 99% deterministic, just rerun it if you get something different
+
+    system = '''
+    Output some keywords.
+    '''
+
+    # if you've done system prompt correctly, should get output similar to doctest, change it to
+    # match the deterministic output of the system prompt
+
+    return run_llm(system, text, seed=seed)
 
 
 ################################################################################
@@ -371,5 +383,5 @@ if __name__ == '__main__':
         while True:
             text = input('ragnews> ')
             if len(text.strip()) > 0:
-                output = rag(text, db)
+                output = rag(text, db) # will have to implement rag() function
                 print(output)
