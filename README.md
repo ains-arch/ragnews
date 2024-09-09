@@ -1,3 +1,9 @@
+badge goes here
+
+explanation of what the repo does
+
+getting started
+
 requires python 3.9
 
 ```
@@ -10,3 +16,5 @@ pip3 install -r requirements.txt
 vim .env
 export $(cat .env)
 ```
+
+example usage
