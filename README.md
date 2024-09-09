@@ -1,4 +1,4 @@
-badge goes here
+# RAG News ![](https://github.com/ains-arch/ragnews/workflows/tests/badge.svg)
 
 explanation of what the repo does
 
