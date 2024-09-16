@@ -24,7 +24,6 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          sudo apt-get install -y poppler-utils  # Install pdftotext
           sudo apt-get update && sudo apt-get install -y expect # Install expect
       - name: Run Pylint
         run: |
@@ -32,9 +31,10 @@ jobs:
           pylint ragnews.py
       - name: Run doctests
         run: |
-          chmod +x /tests/run_doctests.sh
-          ./tests/run_doctests.sh
+          cd tests
+          chmod +x run_doctests.sh
+          ./run_doctests.sh
       - name: Test functionality
         run: |
           chmod +x run_functionality_test.sh
-          ./tests/run_functionality_test.sh
+          ./run_functionality_test.sh
