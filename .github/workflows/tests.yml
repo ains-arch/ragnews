@@ -32,9 +32,9 @@ jobs:
           pylint ragnews.py
       - name: Run doctests
         run: |
-          chmod +x run_doctests.sh
-          ./run_doctests.sh
+          chmod +x /tests/run_doctests.sh
+          ./tests/run_doctests.sh
       - name: Test functionality
         run: |
           chmod +x run_functionality_test.sh
-          ./run_functionality_test.sh
+          ./tests/run_functionality_test.sh
