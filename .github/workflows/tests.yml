@@ -31,10 +31,7 @@ jobs:
           pylint ragnews.py
       - name: Run doctests
         run: |
-          cd tests
           chmod +x run_doctests.sh
           ./run_doctests.sh
       - name: Test functionality
-        run: |
-          chmod +x run_functionality_test.sh
-          ./run_functionality_test.sh
+        run: echo 'spawn python3 ragnews.py; expect "ragnews> "; send "Sample input\r"; interact' | expect
