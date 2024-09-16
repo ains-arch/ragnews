@@ -51,17 +51,6 @@ $ pip3 install -r requirements.txt
         $ export $(cat .env)
         ```
 
-5. **Add a database:**
-
-    - Create a database of news articles to scrape. You will need to use
-        [metahtml](https://github.com/mikeizbicki/metahtml/tree/d96bcaa3c81d443f39e4a451acc8f4b856fc630b)
-        ```
-        for url in $urls; do
-            echo url
-            python3 ragnews.py --add_url="$url" --recursive_depth=1 --loglevel=DEBUG
-        done
-        ```
-
 ### Example Usage
 
 ```
