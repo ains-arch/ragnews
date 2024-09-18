@@ -9,8 +9,6 @@ New articles can be added to the database with the --add_url parameter,
 and the path to the database can be changed with the --db parameter.
 '''
 
-from urllib.parse import urlparse
-import datetime
 import logging
 import re
 import sqlite3
@@ -188,26 +186,13 @@ class ArticleDB:
     This class represents a database of news articles.
     It is backed by sqlite3 and designed to have no external dependencies and be easy to understand.
 
-    The following example shows how to add urls to the database.
-
-    >>> db = ArticleDB()
-    >>> len(db)
-    0
-
-    Once articles have been added,
-    we can search through those articles to find articles about only certain topics.
+    We can search through those articles to find articles about only certain topics.
 
     >>> articles = db.find_articles('Economía')
 
     The output is a list of articles that match the search query.
     Each article is represented by a dictionary with a number of fields about the article.
-
     '''
-
-    _TESTURLS = [
-        'https://elpais.com/economia/2024-09-06/la-creacion-de-empleo-defrauda-en-estados-unidos-en-agosto-y-aviva-el-fantasma-de-la-recesion.html',
-        'https://www.cnn.com/2024/09/06/politics/american-push-israel-hamas-deal-analysis/index.html',
-        ]
 
     def __init__(self, filename=':memory:'):
         self.db = sqlite3.connect(filename)
@@ -259,6 +244,8 @@ class ArticleDB:
         The final ranking is computed by the FTS5 rank * timebias_alpha / (days since article
         publication + timebias_alpha).
         '''
+        # TODO: what does the timebias_alpha param actually do here, it
+        # doesn't appear to be being passed to anything
 
         sql = f'''
         SELECT url, title, en_summary
@@ -278,105 +265,6 @@ class ArticleDB:
         row_dict = [dict(zip(columns, row)) for row in rows]
         return row_dict
 
-    @_catch_errors
-    def add_url(self, url, recursive_depth=0, allow_dupes=False): #pylint: disable=R0914,R0915
-        '''
-        Download the url, extract various metainformation, and add the metainformation into the db.
-
-        By default, the same url cannot be added into the database multiple times.
-
-        >>> db = ArticleDB()
-        >>> db.add_url(ArticleDB._TESTURLS[0])
-        >>> db.add_url(ArticleDB._TESTURLS[0])
-        >>> db.add_url(ArticleDB._TESTURLS[0])
-        >>> len(db)
-        1
-
-        >>> db = ArticleDB()
-        >>> db.add_url(ArticleDB._TESTURLS[0], allow_dupes=True)
-        >>> db.add_url(ArticleDB._TESTURLS[0], allow_dupes=True)
-        >>> db.add_url(ArticleDB._TESTURLS[0], allow_dupes=True)
-        >>> len(db)
-        3
-
-        '''
-        import requests #pylint: disable=C0415
-        import metahtml #pylint: disable=C0415
-        logging.info('add_url %s', url)
-
-        if not allow_dupes:
-            logging.debug('checking for url in database')
-            sql = '''
-            SELECT count(*) FROM articles WHERE url=?;
-            '''
-            _logsql(sql)
-            cursor = self.db.cursor()
-            cursor.execute(sql, [url])
-            row = cursor.fetchone()
-            is_dupe = row[0] > 0
-            if is_dupe:
-                logging.debug('duplicate detected, skipping!')
-                return
-
-        logging.debug('downloading url')
-        try:
-            response = requests.get(url) # pylint: disable=W3101
-        except requests.exceptions.MissingSchema:
-            # if no schema was provided in the url, add a default
-            url = 'https://' + url
-            response = requests.get(url) # pylint: disable=W3101
-        parsed_uri = urlparse(url)
-        hostname = parsed_uri.netloc
-
-        logging.debug('extracting information')
-        parsed = metahtml.parse(response.text, url) # pylint: disable=I1101
-        info = metahtml.simplify_meta(parsed) # pylint: disable=I1101
-
-        if info['type'] != 'article' or len(info['content']['text']) < 100:
-            logging.debug('not an article... skipping')
-            en_translation = None
-            en_summary = None
-            info['title'] = None
-            info['content'] = {'text': None}
-            info['timestamp.published'] = {'lo': None}
-            info['language'] = None
-        else:
-            logging.debug('summarizing')
-            if not info['language'].startswith('en'):
-                en_translation = translate_text(info['content']['text'])
-            else:
-                en_translation = None
-            en_summary = summarize_text(info['content']['text'])
-
-        logging.debug('inserting into database')
-        sql = '''
-        INSERT INTO articles(title, text, hostname, url, publish_date, crawl_date, lang, en_translation, en_summary)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?);
-        '''
-        _logsql(sql)
-        cursor = self.db.cursor()
-        cursor.execute(sql, [
-            info['title'],
-            info['content']['text'],
-            hostname,
-            url,
-            info['timestamp.published']['lo'],
-            datetime.datetime.now().isoformat(),
-            info['language'],
-            en_translation,
-            en_summary,
-            ])
-        self.db.commit()
-
-        logging.debug('recursively adding more links')
-        if recursive_depth > 0:
-            for link in info['links.all']:
-                url2 = link['href']
-                parsed_uri2 = urlparse(url2)
-                hostname2 = parsed_uri2.netloc
-                if hostname in hostname2 or hostname2 in hostname:
-                    self.add_url(url2, recursive_depth-1)
-
     def __len__(self):
         sql = '''
         SELECT count(*)
@@ -395,26 +283,18 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--loglevel', default='warning')
     parser.add_argument('--db', default='databases/ragnews.db')
-    parser.add_argument('--recursive_depth', default=0, type=int)
-    parser.add_argument('--add_url', help='''If this parameter is added, then the program will not
-    provide an interactive QA session with the database.  Instead, the provided url will be
-    downloaded and added to the database.''')
-    m_args = parser.parse_args()
+    main_args = parser.parse_args()
 
     logging.basicConfig(
         format='%(asctime)s %(levelname)-8s %(message)s',
         datefmt='%Y-%m-%d %H:%M:%S',
-        level=m_args.loglevel.upper(),
+        level=main_args.loglevel.upper(),
         )
 
-    m_db = ArticleDB(m_args.db)
+    main_db = ArticleDB(main_args.db)
 
-    if m_args.add_url:
-        m_db.add_url(m_args.add_url, recursive_depth=m_args.recursive_depth, allow_dupes=True)
-
-    else:
-        while True:
-            user_text = input('ragnews> ')
-            if len(user_text.strip()) > 0:
-                output = rag(user_text, m_db)
-                print(output)
+    while True:
+        user_text = input('ragnews> ')
+        if len(user_text.strip()) > 0:
+            output = rag(user_text, main_db)
+            print(output)
