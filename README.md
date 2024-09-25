@@ -15,36 +15,24 @@ questions.
 To get started with `ragnews`, follow these steps to set up your
 development environment and run the application:
 
-### Requirements
-
-- Python 3.9
-
 ### Setup Instructions
 
-1. **Add the deadsnakes PPA and install Python 3.9:**
+1. **Create and activate a virtual environment:**
 
 ```
-$ sudo add-apt-repository ppa:deadsnakes/ppa
-$ sudo apt update
-$ sudo apt install python3.9 python3.9-venv python3.9-dev
+$ python3 -m venv venv3.12
+$ . ./venv3.12/bin/activate
 ```
 
-2. **Create and activate a virtual environment:**
-
-```
-$ python3.9 -m venv venv
-$ . ./venv/bin/activate
-```
-
-3. **Install the required Python packages:**
+1. **Install the required Python packages:**
 
 ```
 $ pip3 install -r requirements.txt
 ```
 
-4. **Configure environment variables:**
+1. **Configure environment variables:**
 
-    - Edit the `.env` file to include your Groq API key.
+    - Edit the `.env` file to include your Groq API key and OpenAI API key.
     - Export the variables:
 
         ```
