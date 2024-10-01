@@ -1,5 +1,5 @@
 # RAG News
-![](https://github.com/ains-arch/ragnews/workflows/tests/badge.svg?branch=evaluate)
+[![tests](https://github.com/ains-arch/ragnews/actions/workflows/tests.yml/badge.svg?branch=evaluate)](https://github.com/ains-arch/ragnews/actions/workflows/tests.yml)
 
 ## Overview
 
