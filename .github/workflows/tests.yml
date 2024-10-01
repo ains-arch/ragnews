@@ -32,6 +32,7 @@ jobs:
           pylint ragnews/evaluate.py
       - name: Run evaluation script
         run: |
+          export PYTHONPATH=.
           accuracy=$(python3 ragnews/evaluate.py --path hairy-trumpet/data/'wiki__page=2024_United_States_presidential_election,recursive_depth=0__dpsize=paragraph,transformations=[canonicalize, group, rmtitles, split]')
           echo "Accuracy: $accuracy"
           echo "::set-output name=accuracy::$accuracy"
