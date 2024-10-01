@@ -15,7 +15,11 @@ jobs:
     env:
       GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
     steps:
-      - uses: actions/checkout@v2
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+          fetch-depth: 0 
       - name: Set up Python ${{ matrix.python }}
         uses: actions/setup-python@v2
         with:
