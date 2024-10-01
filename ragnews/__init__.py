@@ -455,7 +455,6 @@ if __name__ == '__main__':
         )
 
     main_db = ArticleDB(main_args.db)
-    print(len(main_db))
 
     while True:
         user_text = input('ragnews> ')

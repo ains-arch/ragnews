@@ -49,12 +49,18 @@ $ pip3 install -r requirements.txt
 
         ```
         $ export $(cat .env)
+        $ export PYTHONPATH=.
         ```
 
 ### Example Usage
 
 ```
-$ python3 ragnews.py 
-ragnews> Who are the presidential nominees?
-Based on the article, the presidential nominees are Donald Trump and Kamala Harris
+$ python3 ragnews/__init__.py --db=ragnews/ragnews.db 
+ragnews> Who are the major party presidential nominees?
+According to the article, the major party presidential nominees are Donald Trump and Kamala Harris.
+```
+
+```
+$ python3 ragnews/evaluate.py --path hairy-trumpet/data/'wiki__page=2024_United_States_presidential_election,recursive_depth=0__dpsize=paragraph,transformations=[canonicalize, group, rmtitles, split]'
+0.8188976377952756
 ```
