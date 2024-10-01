@@ -112,20 +112,21 @@ if __name__ == '__main__':
             pred = classifier.predict(masked_text)
             # print(f"DEBUG: raw pred = {pred}")
 
-            # Remove unwanted characters like square brackets or quotes        
-            cleaned_pred = re.sub(r"[\[\]']", '', pred)    
+            # Remove unwanted characters like square brackets or quotes
+            cleaned_pred = re.sub(r"[\[\]']", '', pred)
             # print(f"DEBUG: cleaned_pred: {cleaned_pred}")
-            
-            # Split the predictions by common delimiters (comma, space, or newline)        
-            predictions = re.split(r'[,\n\s]+', cleaned_pred.strip())    
+
+            # Split the predictions by common delimiters (comma, space, or newline)
+            predictions = re.split(r'[,\n\s]+', cleaned_pred.strip())
             # print(f"DEBUG: predictions: {predictions}")
-            
-            # Filter out empty predictions    
-            relevant_predictions = [p.strip() for p in predictions if p.strip()]    
+
+            # Filter out empty predictions
+            relevant_predictions = [p.strip() for p in predictions if p.strip()]
             # print(f"DEBUG: relevant_predictions: {relevant_predictions}")
-            
+
             # Compare predictions to true labels
-            correct += sum(1 for pred, true in zip(relevant_predictions, true_labels) if pred == true)
+            correct += sum(1 for pred, true in zip(relevant_predictions, true_labels) if pred ==
+                           true)
             # print(f"DEBUG: correct: {correct}")
             total += len(true_labels)
             # print(f"DEBUG: total: {total}")
@@ -133,4 +134,4 @@ if __name__ == '__main__':
             # print(f"DEBUG: intermediate_accuracy: {intermediate_accuracy}", flush=True)
 
     accuracy = correct / total if total > 0 else 0
-    print(f'Accuracy: {accuracy:.4f}', flush=True)
+    print(accuracy)

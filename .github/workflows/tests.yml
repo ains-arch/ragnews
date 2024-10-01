@@ -28,10 +28,20 @@ jobs:
       - name: Run Pylint
         run: |
           pip install pylint
-          pylint ragnews.py
-      - name: Run doctests
+          pylint ragnews/__init__.py
+          pylint ragnews/evaluate.py
+      - name: Run evaluation script
         run: |
-          chmod +x run_doctests.sh
-          ./run_doctests.sh
-      - name: Test functionality
-        run: echo 'spawn python3 ragnews.py; expect "ragnews> "; send "Sample input\r"; interact' | expect
+          accuracy=$(python3 ragnews/evaluate.py --path hairy-trumpet/data/'wiki__page=2024_United_States_presidential_election,recursive_depth=0__dpsize=paragraph,transformations=[canonicalize, group, rmtitles, split]')
+          echo "Accuracy: $accuracy"
+          echo "::set-output name=accuracy::$accuracy"
+      - name: Verify accuracy
+        run: |
+          accuracy=${{ steps.run_evaluation.outputs.accuracy }}
+          echo "Extracted accuracy: $accuracy"
+          if (( $(echo "$accuracy < 0.7" | bc -l) )); then
+            echo "Accuracy is less than 0.7. Test failed."
+            exit 1
+          else
+            echo "Accuracy is greater than or equal to 0.7. Test passed."
+          fi

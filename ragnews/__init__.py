@@ -408,7 +408,6 @@ class ArticleDB:
         The final ranking is computed by the FTS5 rank * timebias_alpha / (days since article
         publication + timebias_alpha).
         '''
-        # TODO: what does the timebias_alpha param actually do here, it
         # doesn't appear to be being passed to anything
 
         sql = f'''
