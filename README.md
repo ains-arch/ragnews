@@ -1,5 +1,5 @@
 # RAG News
-![](https://github.com/ains-arch/ragnews/workflows/tests/badge.svg)
+[![tests](https://github.com/ains-arch/ragnews/actions/workflows/tests.yml/badge.svg?branch=openai)](https://github.com/ains-arch/ragnews/actions/workflows/tests.yml)
 
 ## Overview
 
